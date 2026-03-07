@@ -1,0 +1,375 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Verdi",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5001/api"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "SignUp",
+        "description": "Create a new user account",
+        "tags": ["Authentication"],
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "color"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "username": "user1",
+                "password": "abc",
+                "email": "user1@gmail.com",
+                "firstName": "User",
+                "lastName": "One"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "summary": "SignIn",
+        "description": "Log In with username and password",
+        "tags": ["Authentication"],
+        "responses": {
+            "200": {
+            "description": "User successfully signed in",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "User Hai User đã logged in!"
+                            },
+                            "accessToken": {
+                                "type": "string",
+                                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                            }
+                        },
+                        "required": ["message", "accessToken"]
+                        }
+                    }
+                }
+            },
+            "400": { "description": "Invalid input" },
+            "401": { "description": "Unauthorized" },
+            "500": { "description": "Internal server error" }
+
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "color"
+                  }
+                },
+                "required": ["username", "password"]
+              },
+              "example": {
+                "username": "user1",
+                "password": "abc"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signout": {
+      "post": {
+        "summary": "SignOut",
+        "tags": ["Authentication"],
+        "responses": {
+            "204": { "description": "User successfully signed out" },
+            "401": { "description": "Unauthorized" },
+            "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "summary": "AuthMe",
+        "tags": ["Authentication"],
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friends/requests": {
+      "post": {
+        "summary": "SendFriendRequest",
+        "tags": ["Friendship"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "to": "69aadf37f1af9a2e9b9c00f1",
+                "message": "hello"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "GetFriendRequests",
+        "tags": ["Friendship"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/friends/requests/69aae9a6735d8ea914579537/accept": {
+      "post": {
+        "summary": "AccepFriendRequest",
+        "tags": ["Friendship"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/friends/requests/69aaea24735d8ea91457954c/decline": {
+      "post": {
+        "summary": "DeclineFriendRequest",
+        "tags": ["Friendship"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/friends": {
+      "get": {
+        "summary": "GetAllFriends",
+        "tags": ["Friendship"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/messages/direct": {
+      "post": {
+        "summary": "SendDirectMessage",
+        "tags": ["Message"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "recipientId": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "recipientId": "69aade25f1af9a2e9b9c00e5",
+                "content": "From 3 with love"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations": {
+      "post": {
+        "summary": "CreateConversation",
+        "tags": ["Conversation"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "memberIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "type": "group",
+                "name": "Group ABC",
+                "memberIds": [
+                  "69aadcfcf1af9a2e9b9c00dc",
+                  "69aade25f1af9a2e9b9c00e5"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/": {
+      "get": {
+        "summary": "GetConversations",
+        "tags": ["Conversation"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "RefreshToken",
+        "tags": ["Authentication"],
+        "responses": {}
+      }
+    },
+    "/conversations/69abdaea083b78f3341b08b6/messages": {
+      "get": {
+        "summary": "GetMessages",
+        "tags": ["Message"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/messages/group": {
+      "post": {
+        "summary": "SendGroupMessage",
+        "tags": ["Message"],
+        "responses": {},
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "conversationId": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "conversationId": "69abd29b18f53f0a1fd35fe3",
+                "content": "Hi everyone"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
