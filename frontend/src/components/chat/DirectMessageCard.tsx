@@ -9,7 +9,7 @@ import { useChatStore } from "@/stores/useChatStore";
 
 const DirectMessageCard = ({ conv }: { conv: Conversation }) => {
     const { user } = useAuthStore();
-    const { activeConversationId, setActiveConversation, messages } = useChatStore();
+    const { activeConversationId, setActiveConversation, messages, fetchMessages } = useChatStore();
 
     if (!user) return null;
 
@@ -22,7 +22,7 @@ const DirectMessageCard = ({ conv }: { conv: Conversation }) => {
     const handleSelectConversation = async (id: string) => {
         setActiveConversation(id);
         if (!messages[id]) {
-            // Fetch Messages
+            await fetchMessages();
         }
     };
 

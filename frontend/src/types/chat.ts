@@ -28,6 +28,7 @@ export interface LastMessage {
 }
 
 export interface Conversation {
+  id: string;
   _id: string;
   type: "direct" | "group";
   group: Group;

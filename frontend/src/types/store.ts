@@ -30,9 +30,13 @@ export interface ChatState {
         nextCursor?: string | null
     }>;
     activeConversationId: string | null;
-    loading: boolean;
+    convloading: boolean;
+    messageLoading: boolean;
     reset: () => void;
 
     setActiveConversation: (id: string | null) => void;
     fetchConversations: () => Promise<void>;
+    fetchMessages: (conversationId?: string) => Promise<void>;
+    sendDirectMessage: (recipientId: string, content: string, imgUrl?: string) => Promise<void>;
+    sendGroupMessage: (conversationId: string, content: string, imgUrl?: string) => Promise<void>;
 }
