@@ -4,7 +4,6 @@ import { MessageCircleMore, Users } from "lucide-react";
 import { Card } from "../ui/card";
 import UserAvatar from "../chat/UserAvatar";
 import { useChatStore } from "@/stores/useChatStore";
-import { create } from "zustand";
 
 interface FriendListModalProps {
     open: boolean;

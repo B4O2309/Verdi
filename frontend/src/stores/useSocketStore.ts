@@ -3,7 +3,6 @@ import { io, type Socket} from 'socket.io-client';
 import {useAuthStore} from './useAuthStore';
 import type { SocketState } from '@/types/store';
 import { useChatStore } from './useChatStore';
-import { use } from 'react';
 
 const baseURL = import.meta.env.VITE_SOCKET_URL;
 
@@ -72,6 +71,12 @@ export const useSocketStore = create<SocketState>((set, get) => ({
             };
 
             useChatStore.getState().updateConversation(updated);
+        });
+
+        // New Group Conversation
+        socket.on('new-conversation', (conversation) => {
+            useChatStore.getState().addConv(conversation);
+            socket.emit('join-conversation', conversation._id);
         });
     },
 
