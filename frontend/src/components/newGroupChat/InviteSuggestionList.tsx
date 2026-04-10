@@ -8,7 +8,7 @@ interface InviteSuggestionListProps {
 
 const InviteSuggestionList = ({ filteredFriends, onSelect }: InviteSuggestionListProps) => {
     if (filteredFriends.length === 0) {
-        return ;
+        return null;
     }
 
     return (

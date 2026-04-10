@@ -3,7 +3,6 @@ import type { ChatState } from '@/types/store';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuthStore } from './useAuthStore';
-import { ca } from 'zod/v4/locales';
 import { useSocketStore } from './useSocketStore';
 
 export const useChatStore = create<ChatState>()(
@@ -14,6 +13,7 @@ export const useChatStore = create<ChatState>()(
             activeConversationId: null,
             convloading: false, //conv loading
             messageLoading: false, //message loading
+            loading: false, //general loading for actions like creating conversation or sending message
 
             setActiveConversation: (id) => set({activeConversationId: id}),
             reset: () => {
@@ -206,6 +206,7 @@ export const useChatStore = create<ChatState>()(
             
             createConversation: async (type, name, memberIds) => {
                 try {
+                    set({loading: true});
                     const conversation = await chatService.createConversation(type, name, memberIds);
 
                     get().addConv(conversation);
@@ -214,6 +215,9 @@ export const useChatStore = create<ChatState>()(
                 }
                 catch (error) {
                     console.error("Failed to create conversation", error);
+                }
+                finally {
+                    set({loading: false});
                 }
             }
         }),
