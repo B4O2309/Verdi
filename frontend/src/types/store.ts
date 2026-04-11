@@ -16,6 +16,7 @@ export interface AuthState {
     signOut: () => Promise<void>;
     fetchMe: () => Promise<void>;
     refresh: () => Promise<void>;
+    updateProfile: (data: { displayName?: string; username?: string; email?: string; phone?: string; bio?: string }) => Promise<void>;
 }
 
 export interface ThemeState {

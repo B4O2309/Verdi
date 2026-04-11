@@ -120,7 +120,24 @@ export const useAuthStore = create<AuthState>()(
                 finally {
                     set({loading: false});
                 }
-            }
+            },
+
+            updateProfile: async (data) => {
+                try {
+                    set({ loading: true });
+                    const user = await authService.updateProfile(data);
+                    set({ user });
+                    toast.success('Profile updated successfully!');
+                }
+                catch (error: any) {
+                    console.error(error);
+                    const message = error?.response?.data?.message || 'Update failed. Please try again.';
+                    toast.error(message);
+                }
+                finally {
+                    set({ loading: false });
+                }
+            },
         }),
         {
             name: 'auth-storage',

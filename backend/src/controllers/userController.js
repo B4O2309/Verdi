@@ -60,3 +60,36 @@ export const uploadAvatar = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { displayName, username, email, phone, bio } = req.body;
+
+        if (username) {
+            const existing = await User.findOne({ username, _id: { $ne: userId } });
+            if (existing) {
+                return res.status(409).json({ message: 'Username already taken' });
+            }
+        }
+
+        if (email) {
+            const existing = await User.findOne({ email, _id: { $ne: userId } });
+            if (existing) {
+                return res.status(409).json({ message: 'Email already in use' });
+            }
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { displayName, username, email, phone, bio },
+            { new: true, runValidators: true }
+        ).select("-hashedPassword");
+
+        return res.status(200).json({ user: updatedUser });
+    }
+    catch (error) {
+        console.error('Error during update profile:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
