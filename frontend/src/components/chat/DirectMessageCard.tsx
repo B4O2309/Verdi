@@ -10,7 +10,7 @@ import { useSocketStore } from "@/stores/useSocketStore";
 
 const DirectMessageCard = ({ conv }: { conv: Conversation }) => {
     const { user } = useAuthStore();
-    const { activeConversationId, setActiveConversation, messages, fetchMessages } = useChatStore();
+    const { activeConversationId, setActiveConversation, messages, fetchMessages, hideConversation, deleteConversation } = useChatStore();
     const { onlineUsers } = useSocketStore();
 
     if (!user) return null;
@@ -23,21 +23,19 @@ const DirectMessageCard = ({ conv }: { conv: Conversation }) => {
 
     const handleSelectConversation = async (id: string) => {
         setActiveConversation(id);
-        if (!messages[id]) {
-            await fetchMessages();
-        }
+        if (!messages[id]) await fetchMessages();
     };
 
     return (
         <ChatCard
             convId={conv._id}
             name={otherUser.displayName ?? ""}
-            timestamp={
-                conv.lastMessage?.createdAt ? new Date(conv.lastMessage.createdAt) : undefined
-            }
+            timestamp={conv.lastMessage?.createdAt ? new Date(conv.lastMessage.createdAt) : undefined}
             isActive={activeConversationId === conv._id}
             onSelect={handleSelectConversation}
             unreadCount={unreadCount}
+            onHide={() => hideConversation(conv._id)}
+            onDelete={() => deleteConversation(conv._id)}
             leftSection={
                 <>
                     <UserAvatar
@@ -45,8 +43,7 @@ const DirectMessageCard = ({ conv }: { conv: Conversation }) => {
                         name={otherUser.displayName ?? ""}
                         avatarUrl={otherUser.avatarUrl ?? undefined}
                     />
-                    {/* Socket.io */}
-                    <StatusBadge status={onlineUsers.includes(otherUser?._id ?? "") ? "online" : "offline"}/>
+                    <StatusBadge status={onlineUsers.includes(otherUser?._id ?? "") ? "online" : "offline"} />
                     {unreadCount > 0 && <UnreadCountBadge unreadCount={unreadCount} />}
                 </>
             }

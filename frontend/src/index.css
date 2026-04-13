@@ -33,9 +33,9 @@
     --muted: 260 30% 95%;
     --muted-foreground: 240 15% 50%;
 
-    /* Accent - cyan */
-    --accent: 180 100% 75%;
-    --accent-foreground: 240 100% 15%;
+    /* Accent - lavender */
+    --accent: 270 50% 92%;
+    --accent-foreground: 280 100% 40%;
 
     /* Chat colors */
     --chat-bubble-sent: 271 79% 47%;
@@ -142,8 +142,8 @@
     --muted: 240 15% 15%;
     --muted-foreground: 240 15% 70%;
 
-    --accent: 180 100% 60%;
-    --accent-foreground: 240 15% 8%;
+    --accent: 270 20% 20%;
+    --accent-foreground: 280 100% 80%;
 
     /* Chat bubbles in dark mode */
     --chat-bubble-sent: 280 100% 65%;
@@ -314,7 +314,7 @@
   .message-bounce {
     animation: messageSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
   }
-
+  
   @keyframes messageSlideIn {
     0% {
       opacity: 0;
@@ -330,23 +330,23 @@
 :root {
   --sidebar: hsl(0 0% 98%);
   --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary: hsl(271 79% 47%);
   --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar-accent: hsl(270 50% 92%);
+  --sidebar-accent-foreground: hsl(280 100% 40%);
+  --sidebar-border: hsl(282 16% 87%);
+  --sidebar-ring: hsl(271 79% 47%);
 }
 
 .dark {
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary: hsl(280 100% 70%);
   --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar-accent: hsl(270 20% 20%);
+  --sidebar-accent-foreground: hsl(280 100% 80%);
+  --sidebar-border: hsl(281 15% 25%);
+  --sidebar-ring: hsl(280 100% 70%);
 }
 
 @theme inline {
@@ -359,3 +359,10 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
+* { cursor: default !important; }
+input, textarea, [contenteditable] { cursor: text !important; }
+button, a, [role="button"], label[for],
+[role="menuitem"], [role="option"],
+[role="tab"], [role="checkbox"] { cursor: pointer !important; }
+[disabled], [aria-disabled="true"] { cursor: not-allowed !important; }

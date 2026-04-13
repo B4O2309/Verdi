@@ -8,14 +8,14 @@ export const friendService = {
 
     async sendFriendRequest(to: string, message?: string) {
         const res = await api.post("/friends/requests", { to, message });
-        return res.data.message;
+        return { message: res.data.message, request: res.data.request };
     },
 
     async getAllFriendRequests() {
         try {
             const res = await api.get("/friends/requests");
-            const {sent, received} = res.data;
-            return {sent, received};
+            const { sent, received } = res.data;
+            return { sent, received };
         }
         catch (error) {
             console.error("Error fetching friend requests:", error);

@@ -7,7 +7,7 @@ import {z} from "zod"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { useAuthStore } from "@/stores/useAuthStore"
-import { useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 const signUpSchema = z.object({
   firstname: z.string().min(1, "First name is required"),
@@ -162,9 +162,9 @@ export function SignupForm({
 
               <div className="text-center text-sm">
                 Already have an account {` `}
-                <a href="/signin" className="text-primary underline underline-offset-4">
+                <Link to="/signin" className="text-primary underline underline-offset-4">
                   Sign in
-                </a>
+                </Link>
               </div>
             </div>
           </form>

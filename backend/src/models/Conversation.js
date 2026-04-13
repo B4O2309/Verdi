@@ -69,7 +69,19 @@ const conversationSchema = new mongoose.Schema({
         type: Map,
         of: Number,
         default: {}
-    }
+    },
+    hiddenBy: [
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "User" 
+        }
+    ],
+    deletedBy: [
+        {
+            userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+            deletedAt: { type: Date, default: Date.now }
+        }
+    ]
 }, { timestamps: true });
 
 conversationSchema.index({

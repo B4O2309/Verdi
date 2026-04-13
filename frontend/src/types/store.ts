@@ -49,8 +49,12 @@ export interface ChatState {
     // Update Conversation
     updateConversation: (conversation: any) => void;
     markAsSeen: () => Promise<void>;
-    addConv: (conv: Conversation) => void;
+    addConv: (conv: Conversation, setActive?: boolean) => void;
     createConversation: (type: 'direct' | 'group', name: string, memberIds: string[]) => Promise<void>;
+    hideConversation: (conversationId: string) => Promise<void>;
+    deleteConversation: (conversationId: string) => Promise<void>;
+    renameGroup: (conversationId: string, name: string) => Promise<void>;
+    leaveGroup: (conversationId: string) => Promise<void>;
 }
 
 export interface SocketState {
@@ -75,4 +79,25 @@ export interface FriendState {
 
 export interface UserState {
     updatedAvatarUrl: (formData: FormData) => Promise<void>;
+}
+
+export interface BlockState {
+    blockedUsers: BlockedUser[];
+    _blockedByUsers: string[];
+    loading: boolean;
+    fetchBlockedUsers: () => Promise<void>;
+    blockUser: (userId: string) => Promise<void>;
+    unblockUser: (userId: string) => Promise<void>;
+    getBlockStatus: (userId: string) => Promise<{ iBlockedThem: boolean; theyBlockedMe: boolean }>;
+    isBlocked: (userId: string) => boolean;
+    isBlockedBy: (userId: string) => boolean;
+    addBlock: (blockerId: string, blockedId: string, currentUserId: string) => void;
+    removeBlock: (blockerId: string, blockedId: string, currentUserId: string) => void;
+}
+
+export interface BlockedUser {
+    _id: string;
+    displayName: string;
+    username?: string;
+    avatarUrl?: string;
 }

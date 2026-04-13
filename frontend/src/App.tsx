@@ -4,20 +4,14 @@ import SignInPage from './pages/SignInPage'
 import { SignUpPage } from './pages/SignUpPage'
 import { Toaster } from 'sonner';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import { useThemeStore } from './stores/useThemeStore';
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/useAuthStore';
 import { useSocketStore } from './stores/useSocketStore';
+import GoogleCallbackPage from './pages/GoogleCallbackPage';
 
 function App() {
-  const {isDark, setTheme} = useThemeStore();
   const {accessToken} = useAuthStore();
   const {connectSocket, disconnectSocket} = useSocketStore();
-
-  useEffect(() => {
-    
-    setTheme(isDark);
-  }, [isDark]);
 
   useEffect(() => {
     if (accessToken) {
@@ -42,6 +36,11 @@ function App() {
         <Route
           path="/signup"
           element={<SignUpPage/>}
+        />
+
+        <Route 
+          path="/auth/google/callback" 
+          element={<GoogleCallbackPage />} 
         />
 
         {/* protected routes */}

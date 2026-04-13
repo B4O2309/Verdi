@@ -7,6 +7,8 @@ export interface User {
   bio?: string;
   phone?: string;
   showOnlineStatus?: boolean;
+  hasPassword?: boolean;
+  googleId?: string;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -3,14 +3,13 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,
         unique: true,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        sparse: true // Allows multiple null values
     },
     hashedPassword: {
         type: String,
-        required: true
     },
     email: {
         type: String,
@@ -41,6 +40,11 @@ const userSchema = new mongoose.Schema({
     showOnlineStatus: {
         type: Boolean,
         default: true
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true
     },
 },
 {

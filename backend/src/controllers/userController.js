@@ -5,8 +5,14 @@ import bcrypt from "bcryptjs";
 export const authMe = async (req, res) => {
     try {
         const user = req.user;
+        const userWithPassword = await User.findById(user._id).select('hashedPassword');
 
-        return res.status(200).json({ user });
+        return res.status(200).json({
+            user: {
+                ...user.toObject(),
+                hasPassword: !!userWithPassword.hashedPassword,
+            }
+        });
     }
     catch (error) {
         console.error('Error during auth me:', error);
@@ -145,6 +151,24 @@ export const changePassword = async (req, res) => {
     }
     catch (error) {
         console.error('Error during change password:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findById(id).select(
+            "_id displayName username avatarUrl bio"
+        );
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        return res.status(200).json({ user });
+    }
+    catch (error) {
+        console.error('Error during get user by id:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };

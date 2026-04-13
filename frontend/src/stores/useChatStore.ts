@@ -4,6 +4,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuthStore } from './useAuthStore';
 import { useSocketStore } from './useSocketStore';
+import { toast } from 'sonner';
+import api from '@/lib/axios';
 
 export const useChatStore = create<ChatState>()(
     persist(
@@ -115,23 +117,24 @@ export const useChatStore = create<ChatState>()(
 
             addMessage: async (message) => {
                 try {
-                    const {user} = useAuthStore.getState();
-                    const {fetchMessages} = get();
+                    const { user } = useAuthStore.getState();
+                    const { activeConversationId } = get();
 
                     message.isOwn = message.senderId === user?._id;
-
                     const convId = message.conversationId;
 
-                    let prevItems = get().messages[convId]?.items ?? [];
-
-                    if (prevItems.length === 0) {
-                        await fetchMessages(message.conversationId);
-                        prevItems = get().messages[convId]?.items ?? [];
+                    if (activeConversationId === convId) {
+                        const prevItems = get().messages[convId]?.items ?? [];
+                        if (prevItems.length === 0) {
+                            await get().fetchMessages(convId);
+                        }
                     }
 
                     set((state) => {
-                        if(prevItems.some(m => m._id === message._id)) {
-                            return state; // No duplicates
+                        const prevItems = state.messages[convId]?.items ?? [];
+
+                        if (prevItems.some(m => m._id === message._id)) {
+                            return state; // no duplicates
                         }
 
                         return {
@@ -139,12 +142,12 @@ export const useChatStore = create<ChatState>()(
                                 ...state.messages,
                                 [convId]: {
                                     items: [...prevItems, message],
-                                    hasMore: state.messages[convId]?.hasMore,
-                                    nextCursor: state.messages[convId].nextCursor ?? undefined
+                                    hasMore: state.messages[convId]?.hasMore ?? false,
+                                    nextCursor: state.messages[convId]?.nextCursor ?? null
                                 }
                             }
-                        }
-                    })
+                        };
+                    });
                 }
                 catch (error) {
                     console.error("Failed to add message", error);
@@ -153,9 +156,12 @@ export const useChatStore = create<ChatState>()(
             
             updateConversation: (conversation) => {
                 set((state) => ({
-                    conversations: state.conversations.map((c) => 
-                        c._id === conversation._id ? {...c, ...conversation} : c)
-                }))
+                    conversations: state.conversations.map((c) =>
+                        c._id === conversation._id
+                            ? { ...c, ...conversation }
+                            : c
+                    )
+                }));
             },
             
             markAsSeen: async () => {
@@ -190,36 +196,93 @@ export const useChatStore = create<ChatState>()(
                 }
             },
 
-            addConv: (conv) => {
+            addConv: (conv, setActive = false) => {
                 if (!conv?._id) return;
                 set((state) => {
                     const exists = state.conversations.some((c) => c._id.toString() === conv._id.toString());
-
                     return {
-                        conversations: exists
-                        ? state.conversations
-                        : [conv, ...state.conversations],
-                        activeConversationId: conv._id
-                    }
+                        conversations: exists ? state.conversations : [conv, ...state.conversations],
+                        ...(setActive ? { activeConversationId: conv._id } : {})
+                    };
                 });
             },
             
             createConversation: async (type, name, memberIds) => {
                 try {
-                    set({loading: true});
+                    set({ loading: true });
                     const conversation = await chatService.createConversation(type, name, memberIds);
-
-                    get().addConv(conversation);
-
+                    get().addConv(conversation, true);
                     useSocketStore.getState().socket?.emit('join-conversation', conversation._id);
                 }
                 catch (error) {
                     console.error("Failed to create conversation", error);
                 }
                 finally {
-                    set({loading: false});
+                    set({ loading: false });
                 }
-            }
+            },
+
+            hideConversation: async (conversationId: string) => {
+                try {
+                    await api.put(`/conversations/${conversationId}/hide`, {}, { withCredentials: true });
+                    // Delete locally to reflect immediately
+                    set((state) => ({
+                        conversations: state.conversations.filter((c) => c._id !== conversationId),
+                        activeConversationId: state.activeConversationId === conversationId
+                            ? null
+                            : state.activeConversationId
+                    }));
+                } catch (error) {
+                    console.error(error);
+                    toast.error('Failed to hide conversation.');
+                }
+            },
+
+            deleteConversation: async (conversationId: string) => {
+                try {
+                    await api.delete(`/conversations/${conversationId}/delete`, { withCredentials: true });
+                    set((state) => ({
+                        conversations: state.conversations.filter((c) => c._id !== conversationId),
+                        activeConversationId: state.activeConversationId === conversationId
+                            ? null
+                            : state.activeConversationId,
+                        messages: Object.fromEntries(
+                            Object.entries(state.messages).filter(([key]) => key !== conversationId)
+                        )
+                    }));
+                } catch (error) {
+                    console.error(error);
+                    toast.error('Failed to delete conversation.');
+                }
+            },
+
+            renameGroup: async (conversationId: string, name: string) => {
+                try {
+                    const res = await api.patch(`/conversations/${conversationId}/rename`, { name }, { withCredentials: true });
+                } catch (error) {
+                    console.error(error);
+                    toast.error('Failed to rename group.');
+                }
+            },
+
+            leaveGroup: async (conversationId: string) => {
+                try {
+                    await api.delete(`/conversations/${conversationId}/leave`, { withCredentials: true });
+                    set((state) => ({
+                        conversations: state.conversations.filter((c) => c._id !== conversationId),
+                        activeConversationId: state.activeConversationId === conversationId
+                            ? null
+                            : state.activeConversationId,
+                        messages: Object.fromEntries(
+                            Object.entries(state.messages).filter(([key]) => key !== conversationId)
+                        )
+                    }));
+                    toast.success('Left group successfully.');
+                } catch (error) {
+                    console.error(error);
+                    toast.error('Failed to leave group.');
+                }
+            },
         }),
         {
             name: 'chat-storage',

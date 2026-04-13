@@ -1,5 +1,6 @@
 import { friendService } from "@/services/friendService";
 import type { FriendState } from "@/types/store";
+import type { FriendRequest } from "@/types/user";
 import { create } from "zustand";
 
 export const useFriendStore = create<FriendState>((set, get) => ({
@@ -24,12 +25,23 @@ export const useFriendStore = create<FriendState>((set, get) => ({
     addFriend: async (to, message) => {
         try {
             set({ loading: true });
-            const resultMessage = await friendService.sendFriendRequest(to, message);
+            const { message: resultMessage, request } = await friendService.sendFriendRequest(to, message);
+
+            if (request) {
+                set((state) => ({
+                    sentList: state.sentList.some(r => r._id === request._id)
+                        ? state.sentList
+                        : [request, ...state.sentList]
+                }));
+            }
+
             return resultMessage;
-        } catch (error) {
-            console.error("Error sending friend request:", error);
-            return "Failed to send friend request.";
-        } finally {
+        }
+        catch (error: any) {
+            const serverMessage = error?.response?.data?.message;
+            return serverMessage || "Failed to send friend request.";
+        }
+        finally {
             set({ loading: false });
         }
     },
@@ -96,5 +108,12 @@ export const useFriendStore = create<FriendState>((set, get) => ({
         finally {
             set({ loading: false });
         }
+    },    
+    addReceivedRequest: (request: FriendRequest) => {
+        set((state) => {
+            const exists = state.receivedList.some(r => r._id === request._id);
+            if (exists) return state;
+            return { receivedList: [request, ...state.receivedList] };
+        });
     },
 }));

@@ -48,4 +48,24 @@ export const authService = {
         const response = await api.put('/users/me/change-password', { oldPassword, newPassword }, { withCredentials: true });
         return response.data;
     },
+
+    forgotPassword: async (email: string) => {
+        const response = await api.post('/auth/forgot-password', { email }, { withCredentials: true });
+        return response.data;
+    },
+
+    verifyOtp: async (email: string, otp: string) => {
+        const response = await api.post('/auth/verify-otp', { email, otp }, { withCredentials: true });
+        return response.data;
+    },
+
+    resetPassword: async (email: string, otp: string, newPassword: string) => {
+        const response = await api.post('/auth/reset-password', { email, otp, newPassword }, { withCredentials: true });
+        return response.data;
+    },
+    
+    getUserById: async (id: string) => {
+        const response = await api.get(`/users/${id}`, { withCredentials: true });
+        return response.data.user;
+    },
 }
