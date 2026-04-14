@@ -202,14 +202,19 @@ const MessageInput = ({ selectedConv }: { selectedConv: Conversation }) => {
             )}
 
             {replyingTo && (
-                <div className="flex items-center justify-between p-2 mx-3 mb-1 bg-muted/50 rounded-lg border border-border/50 text-sm">
+                <div className="flex items-center justify-between p-2 mx-3 mb-1 bg-muted/50 rounded-lg border border-border/50">
                     <div className="flex flex-col overflow-hidden border-l-2 border-primary pl-2">
-                        <span className="font-semibold text-xs text-primary">Replying to...</span>
+                        <span className="font-semibold text-xs text-primary">
+                            Replying to {replyingTo.isOwn
+                                ? "yourself"
+                                : selectedConv.participants.find(p => p._id === replyingTo.senderId)?.displayName ?? "Unknown"
+                            }
+                        </span>
                         <span className="truncate text-muted-foreground text-xs">
-                            {replyingTo.content || (replyingTo.imgUrl ? 'Image' : 'Message')}
+                            {replyingTo.content || (replyingTo.imgUrl ? "📷 Image" : "Message")}
                         </span>
                     </div>
-                    <button onClick={() => setReplyingTo(null)} className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-smooth">
+                    <button onClick={() => setReplyingTo(null)} className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-smooth shrink-0">
                         <X className="size-4" />
                     </button>
                 </div>
