@@ -67,6 +67,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
             if (useChatStore.getState().activeConversationId === message.conversationId) {
                 chatStore.markAsSeen();
+            } else {
+                const currentUserId = useAuthStore.getState().user?._id;
+                if (message.senderId !== currentUserId) {
+                    toast.info("You have a new message");
+                }
             }
 
             // Stop typing indicator when a new message is received

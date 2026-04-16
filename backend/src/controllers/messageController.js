@@ -100,7 +100,14 @@ export const sendDirectMessage = async (req, res) => {
                 joinedAt: p.joinedAt
             }));
 
-            const formatted = { ...conversation.toObject(), participants };
+            const unreadCounts = conversation.unreadCount ? Object.fromEntries(conversation.unreadCount) : {};
+            const formatted = { ...conversation.toObject(), unreadCounts, participants };
+
+            const senderSockets = await io.in(senderId.toString()).fetchSockets();
+            const recipientSockets = await io.in(recipientId.toString()).fetchSockets();
+            
+            senderSockets.forEach(s => s.join(conversation._id.toString()));
+            recipientSockets.forEach(s => s.join(conversation._id.toString()));
 
             io.to(senderId.toString()).emit('new-conversation', formatted);
             io.to(recipientId.toString()).emit('new-conversation', formatted);

@@ -40,8 +40,6 @@ export const emitNewMessage = (io, conversation, message) => {
         unreadCounts,
     };
 
-    io.to(conversation._id.toString()).emit("new-message", payload);
-
     conversation.participants.forEach((p) => {
         const participantId = p.userId.toString();
         io.to(participantId).emit("new-message", payload);

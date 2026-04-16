@@ -103,7 +103,8 @@ export const getConversations = async (req, res) => {
                 joinedAt: p.joinedAt
             }));
 
-            return { ...conv.toObject(), unreadCount: conv.unreadCount || {}, participants };
+            const unreadCounts = conv.unreadCount ? Object.fromEntries(conv.unreadCount) : {};
+            return { ...conv.toObject(), unreadCounts, participants };
         });
 
         return res.status(200).json({ conversations: formatted });
