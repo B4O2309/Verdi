@@ -8,18 +8,18 @@ Users can create an account, add friends, and chat in real-time through direct c
 
 ## Tech stack
 
-**Frontend**
+**Frontend** — TypeScript
 
-- React 19, TypeScript, Vite
+- React 19, Vite
 - TailwindCSS 4
 - Zustand — client state
 - Socket.io Client — real-time events
 - React Router 7, React Hook Form, Zod
 - Axios, Radix UI, Lucide React
 
-**Backend**
+**Backend** — JavaScript
 
-- Node.js, Express, TypeScript
+- Node.js, Express
 - MongoDB + Mongoose
 - Socket.io — WebSocket server
 - JWT with automatic token refresh
@@ -69,22 +69,41 @@ Users can create an account, add friends, and chat in real-time through direct c
 ## Project structure
 
 ```
-client/          React frontend (Vite)
+frontend/                   React + TypeScript (Vite)
   src/
-    components/  Reusable UI components
-    pages/       Route-level views (Login, Register, Chat, etc.)
-    store/       Zustand stores
-    hooks/       Custom hooks
-    lib/         Axios instance, socket setup, utilities
+    pages/                  SignInPage, SignUpPage, ChatAppPage, GoogleCallbackPage
+    components/
+      auth/                 Login / register forms
+      chat/                 Message list, input, reactions, search
+      sidebar/              Conversation list, group list
+      profile/              Profile & settings modal
+      friendRequest/        Friend request panel
+      addFriendModal/       Add friend UI
+      newGroupChat/         Group creation flow
+      createNewChat/        New DM flow
+      skeleton/             Loading skeletons
+      ui/                   Shared primitive components
+    stores/                 Zustand stores (auth, chat, friend, block, socket, theme, user)
+    services/               API call wrappers (auth, chat, friend, user)
+    hooks/                  use-mobile.ts
+    lib/                    Axios instance, utilities
+    types/                  Shared TypeScript types
+    assets/
 
-server/          Node.js + Express backend
+backend/                    Node.js + Express (JavaScript)
   src/
-    routes/      REST API routes
-    controllers/ Request handlers
-    models/      Mongoose schemas (User, Message, Conversation, etc.)
-    middleware/  Auth guards, error handler
-    socket/      Socket.io event handlers
-    utils/       JWT helpers, email sender, etc.
+    server.js               Entry point
+    swagger.json            OpenAPI spec
+    controllers/            authController, conversationController, messageController,
+                            friendController, blockController, userController
+    routes/                 authRoute, conversationRoute, messageRoute,
+                            friendRoute, blockRoute, userRoute
+    models/                 User, Conversation, Message, Friend, FriendRequest,
+                            Block, OTP, Session
+    socket/                 index.js — Socket.io event handlers
+    middlewares/            Auth guards, error handler
+    libs/                   db.js — MongoDB connection
+    utils/                  messageHelper.js
 ```
 
 ## Getting started
@@ -97,24 +116,24 @@ git clone https://github.com/B4O2309/Verdi.git
 cd Verdi
 
 # 2. Install dependencies
-cd server && npm install
-cd ../client && npm install
+cd backend && npm install
+cd ../frontend && npm install
 
 # 3. Configure environment variables
-#    server/.env  — see server/.env.example
-#    client/.env  — see client/.env.example
+#    backend/.env   — see backend/.env.example
+#    frontend/.env  — see frontend/.env.example
 
 # 4. Run
 # Terminal 1 — backend
-cd server && npm run dev
+cd backend && npm run dev
 
 # Terminal 2 — frontend
-cd client && npm run dev
+cd frontend && npm run dev
 ```
 
 Open `http://localhost:5173`.
 
-**Environment variables (server)**
+**Environment variables (backend)**
 
 ```
 PORT=
@@ -133,7 +152,7 @@ CLIENT_URL=http://localhost:5173
 
 ## API docs
 
-With the server running, open `http://localhost:4000/api-docs` for the full Swagger UI reference.
+With the backend running, open `http://localhost:4000/api-docs` for the full Swagger UI reference.
 
 ## Known limitations
 
